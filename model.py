@@ -8,7 +8,7 @@ import numpy as np
 
 # Step 1 - build_token_to_id_vocab
 def build_token_to_id_vocab(sentences, specials=('<pad>', '<bos>', '<eos>', '<unk>')):
-    # TODO: build a token-to-id dict with specials first, then corpus tokens in first-seen order.
+    # build a token-to-id dict with specials first, then corpus tokens in first-seen order.
     token_to_id = {token:i for i, token in enumerate(specials)}
     for sentence in sentences:
         for token in sentence.split(" "):
@@ -19,12 +19,12 @@ def build_token_to_id_vocab(sentences, specials=('<pad>', '<bos>', '<eos>', '<un
 
 # Step 2 - build_id_to_token_vocab
 def build_id_to_token_vocab(token_to_id):
-    # TODO: build the inverse id-to-token dictionary from token_to_id
+    # build the inverse id-to-token dictionary from token_to_id
     return {id: token for token, id in token_to_id.items()}
 
 # Step 3 - encode_sentence_to_ids
 def encode_sentence_to_ids(sentence, token_to_id, unk_token='<unk>'):
-    # TODO: convert whitespace tokens of `sentence` to ids via `token_to_id`, using `unk_token`'s id for OOV
+    # convert whitespace tokens of `sentence` to ids via `token_to_id`, using `unk_token`'s id for OOV
     ids = []
     if not sentence:
         return ids 
@@ -33,32 +33,81 @@ def encode_sentence_to_ids(sentence, token_to_id, unk_token='<unk>'):
         ids.append(token_to_id.get(token, token_to_id[unk_token]))
     return ids
 
-# Step 4 - decode_ids_to_tokens (not yet solved)
-# TODO: implement
+# Step 4 - decode_ids_to_tokens
+def decode_ids_to_tokens(ids, id_to_token):
+    # map each id in ids to its token string via id_to_token and return the list
+    return [id_to_token[id] for id in ids]
 
-# Step 5 - pad_id_sequence (not yet solved)
-# TODO: implement
+# Step 5 - pad_id_sequence
+def pad_id_sequence(ids, max_len, pad_id):
+    # return a list of length exactly max_len, padding with pad_id or truncating.
+    if len(ids) < max_len:
+        return ids + [pad_id] * (max_len-len(ids))
+    else:
+        return ids[:max_len]
 
-# Step 6 - stack_padded_sequences_to_batch (not yet solved)
-# TODO: implement
+# Step 6 - stack_padded_sequences_to_batch
+import torch
 
-# Step 7 - scale_embeddings_by_sqrt_d_model (not yet solved)
-# TODO: implement
+def stack_padded_sequences_to_batch(padded_sequences):
+    """Stack a list of equal-length padded id sequences into a 2D LongTensor batch."""
+    # stack padded id sequences into a (B, L) torch.long tensor
+    return torch.tensor(padded_sequences, dtype=torch.long)
 
-# Step 8 - compute_positional_div_term (not yet solved)
-# TODO: implement
+# Step 7 - scale_embeddings_by_sqrt_d_model
+import math
+import torch
 
-# Step 9 - build_position_index_column (not yet solved)
-# TODO: implement
+def scale_embeddings_by_sqrt_d_model(embeddings, d_model):
+    """Scale a token embedding tensor by sqrt(d_model)."""
+    # rescale embeddings by sqrt(d_model) as in the original Transformer paper
+    return embeddings * math.sqrt(float(d_model))
 
-# Step 10 - fill_even_indices_with_sin (not yet solved)
-# TODO: implement
+# Step 8 - compute_positional_div_term
+import torch, math
 
-# Step 11 - fill_odd_indices_with_cos (not yet solved)
-# TODO: implement
+def compute_positional_div_term(d_model):
+    # return a 1D FloatTensor of length d_model // 2 holding the sinusoidal frequency divisors
+    indices = 2 * torch.arange(d_model//2, dtype=torch.float32)
+    return torch.exp(-indices * math.log(1e4) / d_model)
 
-# Step 12 - build_sinusoidal_positional_encoding (not yet solved)
-# TODO: implement
+# Step 9 - build_position_index_column
+import torch
+
+def build_position_index_column(max_len):
+    """Return a (max_len, 1) float tensor of [0, 1, ..., max_len-1]."""
+    # build a column vector of position indices from 0 to max_len-1
+    return torch.arange(max_len, dtype=torch.float32).reshape((-1,1))
+
+# Step 10 - fill_even_indices_with_sin
+import torch
+
+def fill_even_indices_with_sin(pe, position, div_term):
+    """Fill even feature indices of pe with sin(position * div_term)."""
+    # write sin(position * div_term) into the even-indexed columns of pe and return it
+    pe[:,0::2] = torch.sin(position * div_term)
+    return pe
+
+# Step 11 - fill_odd_indices_with_cos
+import torch
+
+def fill_odd_indices_with_cos(pe, position, div_term):
+    # fill the odd-indexed columns of pe with cos(position * div_term)
+    pe[:, 1::2] = torch.cos(position * div_term)
+    return pe
+
+# Step 12 - build_sinusoidal_positional_encoding
+import torch
+
+def build_sinusoidal_positional_encoding(max_len, d_model):
+    """Assemble the (max_len, d_model) sinusoidal positional encoding matrix."""
+    # build the (max_len, d_model) sinusoidal positional encoding matrix
+    pe = torch.zeros((max_len,d_model), dtype=torch.float32)
+    div_term = compute_positional_div_term(d_model)
+    position = build_position_index_column(max_len)
+    pe = fill_even_indices_with_sin(pe, position, div_term)
+    pe = fill_odd_indices_with_cos(pe, position, div_term)
+    return pe
 
 # Step 13 - add_positional_encoding_to_embeddings (not yet solved)
 # TODO: implement

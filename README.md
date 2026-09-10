@@ -13,15 +13,15 @@ python scaffold.py
 - [x] **1.** build_token_to_id_vocab
 - [x] **2.** build_id_to_token_vocab
 - [x] **3.** encode_sentence_to_ids
-- [ ] **4.** decode_ids_to_tokens
-- [ ] **5.** pad_id_sequence
-- [ ] **6.** stack_padded_sequences_to_batch
-- [ ] **7.** scale_embeddings_by_sqrt_d_model
-- [ ] **8.** compute_positional_div_term
-- [ ] **9.** build_position_index_column
-- [ ] **10.** fill_even_indices_with_sin
-- [ ] **11.** fill_odd_indices_with_cos
-- [ ] **12.** build_sinusoidal_positional_encoding
+- [x] **4.** decode_ids_to_tokens
+- [x] **5.** pad_id_sequence
+- [x] **6.** stack_padded_sequences_to_batch
+- [x] **7.** scale_embeddings_by_sqrt_d_model
+- [x] **8.** compute_positional_div_term
+- [x] **9.** build_position_index_column
+- [x] **10.** fill_even_indices_with_sin
+- [x] **11.** fill_odd_indices_with_cos
+- [x] **12.** build_sinusoidal_positional_encoding
 - [ ] **13.** add_positional_encoding_to_embeddings
 - [ ] **14.** build_padding_mask
 - [ ] **15.** build_causal_mask
