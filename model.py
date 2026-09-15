@@ -298,8 +298,14 @@ def compute_layer_norm_mean_and_variance(x):
     # return (mean, variance) reduced over the last dim with shape (..., 1)
     return (x.mean(dim=-1, keepdim=True), x.var(dim=-1, keepdim=True, correction=0))
 
-# Step 36 - normalize_and_scale_with_gamma_beta (not yet solved)
-# TODO: implement
+# Step 36 - normalize_and_scale_with_gamma_beta
+import torch
+
+def normalize_and_scale_with_gamma_beta(x, gamma, beta, eps=1e-5):
+    # standardize x along the last axis then apply gamma and beta affine transform
+    mean, var = compute_layer_norm_mean_and_variance(x)
+    x_normalized = (x - mean) / torch.sqrt(var + eps)
+    return x_normalized * gamma + beta
 
 # Step 37 - apply_residual_add_and_norm (not yet solved)
 # TODO: implement
